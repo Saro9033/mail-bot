@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Mail Chatbot — Gmail AI Assistant</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.2.4/dist/purify.min.js"></script>
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" id="sidebar">
+        <div class="sidebar-brand">
+          <div class="brand-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+              <polyline points="22,6 12,13 2,6" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="brand-title">Mail Chatbot</h1>
+            <p class="brand-tag">Gmail AI Assistant</p>
+          </div>
+        </div>
+
+        <div class="sidebar-section">
+          <p class="sidebar-label">Quick actions</p>
+          <div class="quick-actions" id="quick-actions">
+            <button type="button" class="quick-action" data-prompt="Show my latest email.">
+              Latest email
+            </button>
+            <button type="button" class="quick-action" data-prompt="Show unread emails from today.">
+              Unread today
+            </button>
+            <button type="button" class="quick-action" data-prompt="Summarize the latest five emails.">
+              Summarize 5 emails
+            </button>
+            <button type="button" class="quick-action" data-prompt="List my draft emails.">
+              My drafts
+            </button>
+          </div>
+        </div>
+
+        <div class="sidebar-section sidebar-tips">
+          <p class="sidebar-label">You can ask</p>
+          <ul class="tips-list">
+            <li>Read & search inbox or sent mail</li>
+            <li>Compose & save drafts</li>
+            <li>Send or reply to emails</li>
+            <li>Message multiple people</li>
+          </ul>
+        </div>
+
+        <div class="sidebar-footer">
+          <p class="sidebar-note">Powered by OpenAI + Gmail API</p>
+        </div>
+      </aside>
+
+      <div class="main-panel">
+        <header class="topbar">
+          <div class="topbar-left">
+            <button type="button" id="sidebar-toggle" class="icon-btn mobile-only" aria-label="Toggle menu">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <line x1="3" y1="12" x2="21" y2="12" />
+                <line x1="3" y1="18" x2="21" y2="18" />
+              </svg>
+            </button>
+            <div class="status-pill" id="status-pill">
+              <span class="status-dot"></span>
+              <span id="status-text">Not signed in</span>
+            </div>
+          </div>
+          <div class="topbar-right">
+            <div id="user-chip" class="user-chip hidden">
+              <div class="user-avatar" id="user-avatar">?</div>
+              <span id="user-email" class="user-email"></span>
+            </div>
+            <button id="auth-btn" class="btn btn-google">
+              <svg class="google-icon" viewBox="0 0 24 24" aria-hidden="true">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" />
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" />
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z" />
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" />
+              </svg>
+              Sign in with Google
+            </button>
+          </div>
+        </header>
+
+        <main class="chat-area">
+          <div id="message-list" class="message-list">
+            <div class="welcome-card" id="welcome-card">
+              <div class="welcome-icon" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                </svg>
+              </div>
+              <h2>Your Gmail assistant</h2>
+              <p>Sign in with Google to read, compose, draft, and send emails using natural language.</p>
+              <div class="welcome-chips" id="welcome-chips">
+                <button type="button" class="chip" data-prompt="Show my latest email.">Show latest email</button>
+                <button type="button" class="chip" data-prompt="Show unread emails from today.">Unread today</button>
+                <button type="button" class="chip" data-prompt="Compose an email to say hello.">Compose email</button>
+                <button type="button" class="chip" data-prompt="Summarize the latest five emails.">Summarize emails</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="input-panel">
+            <form id="chat-form" class="chat-form">
+              <div class="input-wrapper">
+                <textarea
+                  id="chat-input"
+                  class="chat-input"
+                  placeholder="Ask about your emails… (Enter to send, Shift+Enter for new line)"
+                  disabled
+                  maxlength="2000"
+                  rows="1"
+                  autocomplete="off"
+                ></textarea>
+                <button type="submit" id="send-btn" class="send-btn" disabled aria-label="Send message">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="22" y1="2" x2="11" y2="13" />
+                    <polygon points="22 2 15 22 11 13 2 9 22 2" />
+                  </svg>
+                </button>
+              </div>
+              <p class="input-hint" id="input-hint">Sign in to start chatting with your mailbox.</p>
+            </form>
+          </div>
+        </main>
+      </div>
+    </div>
+
+    <div id="sidebar-overlay" class="sidebar-overlay hidden"></div>
+
+    <script src="/app.js"></script>
+  </body>
+</html>
