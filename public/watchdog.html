@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Email Watchdog — Mail Chatbot</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/styles.css" />
+    <link rel="stylesheet" href="/watchdog.css" />
+  </head>
+  <body class="watchdog-body">
+    <header class="wd-topbar">
+      <div class="wd-topbar-left">
+        <a href="/" class="wd-back-link">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <polyline points="15 18 9 12 15 6" />
+          </svg>
+          Back to Chat
+        </a>
+        <div class="wd-title-block">
+          <h1>Email Watchdog</h1>
+          <p>Auto-classify unread inbox mail and forward by type</p>
+        </div>
+      </div>
+      <div class="wd-topbar-right">
+        <div id="wd-user-chip" class="user-chip hidden">
+          <div class="user-avatar" id="wd-user-avatar">?</div>
+          <span id="wd-user-email" class="user-email"></span>
+        </div>
+        <button id="wd-auth-btn" class="btn btn-google">Sign in with Google</button>
+      </div>
+    </header>
+
+    <main class="wd-page" id="wd-page">
+      <section id="wd-gate" class="wd-gate hidden">
+        <div class="wd-gate-card">
+          <div class="wd-gate-icon" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+            </svg>
+          </div>
+          <h2>Sign in to configure watchdog</h2>
+          <p>Connect your Gmail account to set forwarding rules and view activity.</p>
+          <button type="button" class="btn btn-primary" id="wd-gate-signin">Sign in with Google</button>
+        </div>
+      </section>
+
+      <div id="wd-dashboard" class="wd-dashboard hidden">
+        <section class="wd-hero">
+          <div class="wd-hero-main">
+            <div class="wd-status-badge" id="wd-status-badge">
+              <span class="wd-status-dot"></span>
+              <span id="wd-status-label">Inactive</span>
+            </div>
+            <p class="wd-hero-text">
+              Scans unread inbox every few minutes. Matching emails are forwarded and marked read.
+            </p>
+          </div>
+          <div class="wd-hero-actions">
+            <button type="button" id="wd-scan-btn" class="btn btn-secondary">
+              <span id="wd-scan-label">Scan now</span>
+            </button>
+            <label class="wd-enable-switch">
+              <input type="checkbox" id="wd-enabled" />
+              <span class="wd-switch-ui"></span>
+              <span>Watchdog enabled</span>
+            </label>
+          </div>
+        </section>
+
+        <section class="wd-stats-grid">
+          <article class="wd-stat-card" data-stat="read">
+            <p class="wd-stat-label">Emails scanned</p>
+            <p class="wd-stat-value" id="stat-read">0</p>
+            <p class="wd-stat-hint">Unread messages processed</p>
+          </article>
+          <article class="wd-stat-card wd-stat-success" data-stat="forwarded">
+            <p class="wd-stat-label">Forwarded successfully</p>
+            <p class="wd-stat-value" id="stat-forwarded">0</p>
+            <p class="wd-stat-hint">Sent to configured addresses</p>
+          </article>
+          <article class="wd-stat-card wd-stat-muted" data-stat="skipped">
+            <p class="wd-stat-label">Skipped (Other)</p>
+            <p class="wd-stat-value" id="stat-skipped">0</p>
+            <p class="wd-stat-hint">Not matching your rule types</p>
+          </article>
+        </section>
+
+        <section class="wd-panel">
+          <div class="wd-panel-header">
+            <h2>Forwarding rules</h2>
+            <button type="button" id="wd-add-rule" class="btn btn-secondary">Add rule</button>
+          </div>
+          <div id="wd-rules" class="wd-rules"></div>
+          <div class="wd-panel-footer">
+            <p id="wd-save-status" class="wd-save-status"></p>
+            <button type="button" id="wd-save" class="btn btn-primary">Save configuration</button>
+          </div>
+        </section>
+
+        <section class="wd-panel">
+          <div class="wd-panel-header">
+            <h2>Activity log</h2>
+            <div class="wd-filter-tabs" id="wd-filter-tabs">
+              <button type="button" class="wd-filter active" data-filter="all">All</button>
+              <button type="button" class="wd-filter" data-filter="forwarded">Forwarded</button>
+              <button type="button" class="wd-filter" data-filter="skipped">Skipped</button>
+            </div>
+          </div>
+          <div class="wd-activity-wrap">
+            <table class="wd-activity-table">
+              <thead>
+                <tr>
+                  <th>Time</th>
+                  <th>From</th>
+                  <th>Subject</th>
+                  <th>Type</th>
+                  <th>Action</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="wd-activity-body"></tbody>
+            </table>
+            <p id="wd-activity-empty" class="wd-activity-empty hidden">No activity yet. Enable watchdog and scan your inbox.</p>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <script src="/watchdog.js"></script>
+  </body>
+</html>
